@@ -1,0 +1,75 @@
+spring:
+  application:
+    name: ws_wa_electronic_invoicing
+  profiles:
+    active: dev
+  mvc:
+    servlet:
+      path: /api/v1
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+
+app:
+  storage:
+    base-path: ./storage
+    xml-path: xml
+    zip-path: zip
+    cdr-path: cdr
+  keystore:
+    path: ./certs/certificate.p12
+    password: changeit
+  sunat:
+    mock-enabled: true
+    beta-endpoint: https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService
+    prod-endpoint: https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService
+  outbox:
+    fixed-delay-ms: 15000
+    max-attempts: 3
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/ei_dev?useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+  jpa:
+    show-sql: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: beta
+  datasource:
+    url: jdbc:mysql://localhost:3306/ei_beta?useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+  jpa:
+    show-sql: false
+app:
+  sunat:
+    mock-enabled: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:mysql://localhost:3306/ei_prod?useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+  jpa:
+    show-sql: false
+app:
+  sunat:
+    mock-enabled: false
